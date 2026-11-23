@@ -361,42 +361,51 @@
 
         <div class="alert-box" id="errorBox" role="alert"></div>
 
-        <form id="kitokoForm" novalidate>
+        <form id="kitokoForm" action="https://formsubmit.co/kitoko.ladies@gmail.com" method="POST" novalidate>
+          <!-- Paramètres FormSubmit -->
+          <input type="hidden" name="_subject" id="hiddenSubject" value="Nouvelle inscription Atelier Parfum" />
+          <input type="hidden" name="_template" value="table" />
+          <input type="hidden" name="_captcha" value="false" />
+          <input type="hidden" name="_next" id="hiddenNext" value="" />
+          <input type="hidden" name="Reference_Pass" id="hiddenRef" value="" />
+          <input type="hidden" name="Horodatage_Exact" id="hiddenDate" value="" />
+          <input type="hidden" name="Conditions_Validees" value="Oui (4/4 conditions cochées)" />
+
           <div class="form-group">
             <label class="field-label" for="nom">Nom et Prénom <span class="req">*</span></label>
-            <input type="text" id="nom" name="nom" placeholder="Ex : Inès Diallo" required autocomplete="name" />
+            <input type="text" id="nom" name="Nom_et_Prenom" placeholder="Ex : Inès Diallo" required autocomplete="name" />
           </div>
 
           <div class="form-row-2">
             <div class="form-group">
               <label class="field-label" for="telephone">Téléphone (WhatsApp / SMS) <span class="req">*</span></label>
-              <input type="tel" id="telephone" name="telephone" placeholder="06 12 34 56 78" required autocomplete="tel" />
+              <input type="tel" id="telephone" name="Telephone" placeholder="06 12 34 56 78" required autocomplete="tel" />
             </div>
             <div class="form-group">
               <label class="field-label" for="email">Adresse E-mail <span class="req">*</span></label>
-              <input type="email" id="email" name="email" placeholder="ton.email@exemple.com" required autocomplete="email" />
+              <input type="email" id="email" name="Email" placeholder="ton.email@exemple.com" required autocomplete="email" />
             </div>
           </div>
 
           <div class="form-row-2">
             <div class="form-group">
               <label class="field-label" for="instagram">Pseudo Instagram <span class="req">*</span></label>
-              <input type="text" id="instagram" name="instagram" placeholder="@tonpseudo" required />
+              <input type="text" id="instagram" name="Pseudo_Instagram" placeholder="@tonpseudo" required />
             </div>
             <div class="form-group">
               <label class="field-label" for="tiktok">Pseudo TikTok <span class="req">*</span></label>
-              <input type="text" id="tiktok" name="tiktok" placeholder="@tonpseudo" required />
+              <input type="text" id="tiktok" name="Pseudo_TikTok" placeholder="@tonpseudo" required />
             </div>
           </div>
 
           <div class="form-group">
             <label class="field-label">Tes notes olfactives préférées (facultatif)</label>
             <div class="scent-grid">
-              <label class="scent-option"><input type="checkbox" name="notes" value="Vanille & Gourmand" /><span>Vanille & Gourmand</span></label>
-              <label class="scent-option"><input type="checkbox" name="notes" value="Floral" /><span>Floral</span></label>
-              <label class="scent-option"><input type="checkbox" name="notes" value="Fruité" /><span>Fruité</span></label>
-              <label class="scent-option"><input type="checkbox" name="notes" value="Boisé & Ambré" /><span>Boisé & Ambré</span></label>
-              <label class="scent-option"><input type="checkbox" name="notes" value="Frais & Musqué" /><span>Frais & Musqué</span></label>
+              <label class="scent-option"><input type="checkbox" name="Preferences_Olfactives" value="Vanille & Gourmand" /><span>Vanille & Gourmand</span></label>
+              <label class="scent-option"><input type="checkbox" name="Preferences_Olfactives" value="Floral" /><span>Floral</span></label>
+              <label class="scent-option"><input type="checkbox" name="Preferences_Olfactives" value="Fruité" /><span>Fruité</span></label>
+              <label class="scent-option"><input type="checkbox" name="Preferences_Olfactives" value="Boisé & Ambré" /><span>Boisé & Ambré</span></label>
+              <label class="scent-option"><input type="checkbox" name="Preferences_Olfactives" value="Frais & Musqué" /><span>Frais & Musqué</span></label>
             </div>
           </div>
 
@@ -437,7 +446,6 @@
   <script>
     (function () {
       const STORAGE_KEY = 'kitoko_parfum_pass_2026';
-      const DESTINATION_EMAIL = 'kitoko.ladies@gmail.com';
       const formView = document.getElementById('formView');
       const passView = document.getElementById('passView');
       const form = document.getElementById('kitokoForm');
@@ -468,21 +476,30 @@
 
       resetBtn.addEventListener('click', function () {
         try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+        if (window.location.search) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
         form.reset();
         errorBox.classList.remove('visible');
         passView.classList.remove('active');
         formView.style.display = 'block';
       });
 
-      form.addEventListener('submit', async function (e) {
+      form.addEventListener('submit', function (e) {
         e.preventDefault();
         errorBox.classList.remove('visible');
 
-        const nom = document.getElementById('nom').value.trim();
-        const telephone = document.getElementById('telephone').value.trim();
-        const email = document.getElementById('email').value.trim();
-        let instagram = document.getElementById('instagram').value.trim();
-        let tiktok = document.getElementById('tiktok').value.trim();
+        const nomInput = document.getElementById('nom');
+        const telInput = document.getElementById('telephone');
+        const emailInput = document.getElementById('email');
+        const instaInput = document.getElementById('instagram');
+        const tiktokInput = document.getElementById('tiktok');
+
+        const nom = nomInput.value.trim();
+        const telephone = telInput.value.trim();
+        const email = emailInput.value.trim();
+        let instagram = instaInput.value.trim();
+        let tiktok = tiktokInput.value.trim();
 
         if (!nom || !telephone || !email || !instagram || !tiktok) {
           showError('Merci de remplir tous les champs obligatoires avant de valider.');
@@ -499,48 +516,31 @@
 
         if (!instagram.startsWith('@')) instagram = '@' + instagram;
         if (!tiktok.startsWith('@')) tiktok = '@' + tiktok;
+        instaInput.value = instagram;
+        tiktokInput.value = tiktok;
 
-        const notes = Array.from(document.querySelectorAll('input[name="notes"]:checked')).map(el => el.value).join(', ') || 'Non précisé';
-        const horodatage = new Date().toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const horodatage = new Date().toLocaleString('fr-FR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        });
         const reference = 'KTK-2611-' + Math.floor(1000 + Math.random() * 9000);
+
+        document.getElementById('hiddenSubject').value = 'Nouvelle inscription Atelier Parfum — ' + nom;
+        document.getElementById('hiddenRef').value = reference;
+        document.getElementById('hiddenDate').value = horodatage;
+        document.getElementById('hiddenNext').value = window.location.origin + window.location.pathname + '?success=1';
+
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({ reference, nom, instagram, tiktok, horodatage }));
+        } catch (err) {}
 
         submitBtn.disabled = true;
         submitBtn.textContent = 'Envoi en cours...';
-
-        try {
-          const response = await fetch('https://formsubmit.co/ajax/' + DESTINATION_EMAIL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify({
-              _subject: 'Nouvelle inscription Atelier Parfum — ' + nom,
-              _template: 'table',
-              _captcha: 'false',
-              Reference_Pass: reference,
-              Horodatage_Exact: horodatage,
-              Nom_et_Prenom: nom,
-              Telephone: telephone,
-              Email: email,
-              Pseudo_Instagram: instagram,
-              Pseudo_TikTok: tiktok,
-              Preferences_Olfactives: notes,
-              Conditions_Validees: 'Oui (4/4)'
-            })
-          });
-          const result = await response.json();
-          if (response.ok && (result.success === 'true' || result.success === true)) {
-            const passData = { reference, nom, instagram, tiktok, horodatage };
-            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(passData)); } catch (err) {}
-            renderPass(passData);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          } else {
-            throw new Error();
-          }
-        } catch (err) {
-          showError('Erreur de connexion lors de l’envoi. Réessaie dans un instant ou écris à <strong>' + DESTINATION_EMAIL + '</strong>.');
-        } finally {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Valider mon inscription';
-        }
+        form.submit();
       });
     })();
   </script>
